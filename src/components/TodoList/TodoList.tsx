@@ -6,7 +6,7 @@ interface Props {
   tempTodo: Todo | null;
   setErrorMessage: (message: string) => void;
   removeDeletedTodo: (id: number) => void;
-  updateTodo: (newTodo: Todo) => void;
+  refreshTodo: (newTodo: Todo) => void;
 }
 
 export const TodoList: React.FC<Props> = ({
@@ -14,7 +14,7 @@ export const TodoList: React.FC<Props> = ({
   tempTodo,
   setErrorMessage,
   removeDeletedTodo,
-  updateTodo,
+  refreshTodo,
 }) => {
   return (
     <section className="todoapp__main" data-cy="TodoList">
@@ -24,7 +24,7 @@ export const TodoList: React.FC<Props> = ({
             todo={todo}
             setErrorMessage={setErrorMessage}
             removeDeletedTodo={removeDeletedTodo}
-            updateTodo={updateTodo}
+            refreshTodo={refreshTodo}
             key={todo.id}
           />
         );
@@ -35,7 +35,7 @@ export const TodoList: React.FC<Props> = ({
           isActive={true}
           setErrorMessage={setErrorMessage}
           removeDeletedTodo={removeDeletedTodo}
-          updateTodo={updateTodo}
+          refreshTodo={refreshTodo}
           key={tempTodo.id}
         />
       )}

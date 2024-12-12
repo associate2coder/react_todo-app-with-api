@@ -8,20 +8,22 @@ interface Props {
   isActive?: boolean;
   setErrorMessage: (message: string) => void;
   removeDeletedTodo: (id: number) => void;
-  updateTodo: (newTodo: Todo) => void;
+  refreshTodo: (newTodo: Todo) => void;
 }
 
 export const TodoItem: React.FC<Props> = React.memo(
-  ({ todo, isActive, setErrorMessage, removeDeletedTodo, updateTodo }) => {
+  ({ todo, isActive, setErrorMessage, removeDeletedTodo, refreshTodo }) => {
+    const [userAction, setUserAction] = useState(false);
+
     const [loading, setLoading] = useState(false);
     const [currentStatus, setCurrentStatus] = useState(false);
-    const [userAction, setUserAction] = useState(false);
     const [edit, setEdit] = useState(false);
+
     const [todoTitle, setTodoTitle] = useState(todo.title);
 
     const inputRef = useRef<HTMLInputElement>(null);
-    const thisTodoDivRef = useRef<HTMLDivElement>(null);
 
+    // HOOK for update of TODO on the server and trigger refresh in browser
     useEffect(() => {
       if (userAction) {
         setLoading(true);
@@ -29,22 +31,24 @@ export const TodoItem: React.FC<Props> = React.memo(
 
         patchTodo({ ...todo, completed: currentStatus, title: todoTitle })
           .then(item => {
-            updateTodo(item);
+            refreshTodo(item);
             setEdit(false);
           })
           .catch(() => setErrorMessage('Unable to update a todo'))
           .finally(() => {
             setLoading(false);
-            setUserAction(false);
+            setUserAction(false); // remove userAction trigger until next user action
           });
       }
-    }, [currentStatus, userAction]);
+    }, [userAction]);
 
+    // TODO status toggle triggered by User action
     const toggleTodoStatus = () => {
       setCurrentStatus(!todo.completed);
       setUserAction(true);
     };
 
+    // Handling deleting TODO on the server
     const handleDeleteEvent = (id: number) => {
       const deletePromise = deleteTodo(id);
 
@@ -58,6 +62,7 @@ export const TodoItem: React.FC<Props> = React.memo(
         });
     };
 
+    // LOGIC behind whether to UPDATE TODO's title, DELETE TODO on empty title or cancel edit
     const handleUpdateTitle = (title: string) => {
       const newTitle = title.trim();
 
@@ -79,7 +84,8 @@ export const TodoItem: React.FC<Props> = React.memo(
       }
     };
 
-    const onEnter = (e: KeyboardEvent) => {
+    // Handling completion of edit on Enter key
+    const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Enter') {
         const inputElement = inputRef.current as HTMLInputElement;
 
@@ -89,7 +95,8 @@ export const TodoItem: React.FC<Props> = React.memo(
       }
     };
 
-    const onEsc = (e: KeyboardEvent) => {
+    // Handling cancellation of edit on Escape key
+    const onEsc = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Escape') {
         const originalTitle = todo.title;
 
@@ -98,32 +105,23 @@ export const TodoItem: React.FC<Props> = React.memo(
       }
     };
 
+    // Handling edit input losing focus
     const onBlur = () => {
-      const input = inputRef.current as HTMLInputElement;
-
-      if (input) {
-        document.removeEventListener('keydown', onEnter);
-        document.removeEventListener('keyup', onEsc);
-        handleUpdateTitle(input.value);
+      if (inputRef.current) {
+        handleUpdateTitle(inputRef.current.value);
       }
     };
 
+    // Handling starting edit input on double click
     const handleDoubleClick = () => {
       if (!edit) {
         setEdit(true);
-        const thisTodoDiv = thisTodoDivRef.current as HTMLDivElement;
-
-        if (thisTodoDiv) {
-          document.addEventListener('keydown', onEnter);
-          document.addEventListener('keyup', onEsc);
-        }
       }
     };
 
     return (
       <div
         data-cy="Todo"
-        ref={thisTodoDivRef}
         onDoubleClick={handleDoubleClick}
         className={cn('todo', {
           completed: todo.completed,
@@ -150,6 +148,8 @@ export const TodoItem: React.FC<Props> = React.memo(
             className="todo__title-field"
             value={todoTitle}
             onChange={e => setTodoTitle(e.target.value)}
+            onKeyDown={onEnter}
+            onKeyUp={onEsc}
             onBlur={onBlur}
             autoFocus
           />

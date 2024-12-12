@@ -74,6 +74,7 @@ export const AddNewTodo: React.FC<Props> = ({
       });
   };
 
+  // Handling form submission on Enter key
   const onEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'enter') {
       const target = e.target as HTMLInputElement;

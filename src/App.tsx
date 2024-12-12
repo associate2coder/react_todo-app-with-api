@@ -20,7 +20,7 @@ export const App: React.FC = () => {
   const [filterQuery, setFilterQuery] = useState('all');
   const [focusRequested, setFocusRequested] = useState(false);
 
-  // LOAD TODOs
+  // LOAD TODOs from server
   useEffect(() => {
     setLoading(true);
     getTodos()
@@ -34,7 +34,7 @@ export const App: React.FC = () => {
     setTodos(prevTodos => [...prevTodos, newTodo]);
   };
 
-  const updateTodo = (newTodo: Todo) => {
+  const refreshTodo = (newTodo: Todo) => {
     const updatedTodos = todos.map(item => {
       return item.id === newTodo.id ? newTodo : item;
     });
@@ -57,6 +57,7 @@ export const App: React.FC = () => {
     setFocusRequested(true);
   };
 
+  // Logic behind DELETing all completed TODOs
   const clearCompletedTodos = () => {
     const completedTodos = todos.filter(todo => todo.completed);
 
@@ -146,7 +147,6 @@ export const App: React.FC = () => {
   };
 
   // ERROR NOTIFICATION handling
-
   const errorNoticeRef = useRef<HTMLDivElement>(null);
   const errorNoticeDiv = errorNoticeRef.current as HTMLDivElement;
 
@@ -191,7 +191,7 @@ export const App: React.FC = () => {
           tempTodo={tempTodo}
           setErrorMessage={setErrorMessage}
           removeDeletedTodo={removeDeletedTodo}
-          updateTodo={updateTodo}
+          refreshTodo={refreshTodo}
         />
 
         {/* The Footer is shown ONLY when there are any todos to be listed */}
