@@ -40,6 +40,7 @@ export const TodoItem: React.FC<Props> = React.memo(
             setUserAction(false); // remove userAction trigger until next user action
           });
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [userAction]);
 
     // TODO status toggle triggered by User action

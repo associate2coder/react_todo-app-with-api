@@ -1,51 +1,35 @@
 import cn from 'classnames';
+import { Status } from '../../types/Status';
 
 interface Props {
-  filterQuery: string;
-  setFilterQuery: (newQuery: string) => void;
+  statusFilter: string;
+  setStatusFilter: (newFilter: Status) => void;
 }
 
 export const FilterTodos: React.FC<Props> = ({
-  filterQuery,
-  setFilterQuery,
+  statusFilter,
+  setStatusFilter,
 }) => {
   return (
     <nav className="filter" data-cy="Filter">
-      <a
-        href="#/"
-        //Active link has the 'selected' class
-        className={cn('filter__link', {
-          selected: filterQuery === 'all',
-        })}
-        data-cy="FilterLinkAll"
-        onClick={() => setFilterQuery('all')}
-      >
-        All
-      </a>
+      {Object.values(Status).map(status => {
+        const capitalizedStatusValue = `${status.substring(0, 1).toUpperCase()}${status.substring(1)}`;
 
-      <a
-        href="#/active"
-        //Active link has 'selected' class
-        className={cn('filter__link', {
-          selected: filterQuery === 'active',
-        })}
-        data-cy="FilterLinkActive"
-        onClick={() => setFilterQuery('active')}
-      >
-        Active
-      </a>
-
-      <a
-        href="#/completed"
-        //Active link has 'selected' class
-        className={cn('filter__link', {
-          selected: filterQuery === 'completed',
-        })}
-        data-cy="FilterLinkCompleted"
-        onClick={() => setFilterQuery('completed')}
-      >
-        Completed
-      </a>
+        return (
+          <a
+            href="#/"
+            //Active link has the 'selected' class
+            className={cn('filter__link', {
+              selected: statusFilter === status,
+            })}
+            data-cy={`FilterLink${capitalizedStatusValue}`}
+            onClick={() => setStatusFilter(status)}
+            key={status}
+          >
+            {capitalizedStatusValue}
+          </a>
+        );
+      })}
     </nav>
   );
 };

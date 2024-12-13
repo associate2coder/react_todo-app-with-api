@@ -10,6 +10,7 @@ import { TodoList } from './components/TodoList/TodoList';
 import { AddNewTodo } from './components/AddNewTodo/AddNewTodo';
 import { Footer } from './components/Footer/Footer';
 import { ErrorNotification } from './components/ErrorNotification';
+import { Status } from './types/Status';
 
 export const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -17,7 +18,7 @@ export const App: React.FC = () => {
   const [tempTodo, setTempTodo] = useState<Todo | null>(null);
 
   const [errorMessage, setErrorMessage] = useState('');
-  const [filterQuery, setFilterQuery] = useState('all');
+  const [statusFilter, setStatusFilter] = useState(Status.all);
   const [focusRequested, setFocusRequested] = useState(false);
 
   // LOAD TODOs from server
@@ -88,20 +89,17 @@ export const App: React.FC = () => {
 
   // FILTER TODOs
   const filteredTodos = useMemo(() => {
-    switch (filterQuery) {
-      case 'active': {
+    switch (statusFilter) {
+      case Status.active:
         return todos.filter(todo => !todo.completed);
-      }
 
-      case 'completed': {
+      case Status.completed:
         return todos.filter(todo => todo.completed);
-      }
 
-      default: {
+      default:
         return todos;
-      }
     }
-  }, [filterQuery, todos]);
+  }, [statusFilter, todos]);
 
   // COUNT TODOs
   const activeTodoCount = useMemo(() => {
@@ -199,8 +197,8 @@ export const App: React.FC = () => {
           <Footer
             activeTodoCount={activeTodoCount}
             completedTodoCount={completedTodoCount}
-            filterQuery={filterQuery}
-            setFilterQuery={setFilterQuery}
+            statusFilter={statusFilter}
+            setStatusFilter={setStatusFilter}
             clearCompletedTodos={clearCompletedTodos}
           />
         )}

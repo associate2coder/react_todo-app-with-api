@@ -1,11 +1,12 @@
 import React from 'react';
 import { FilterTodos } from '../FilterTodos';
+import { Status } from '../../types/Status';
 
 interface Props {
   activeTodoCount: number;
   completedTodoCount: number;
-  filterQuery: string;
-  setFilterQuery: (newQuery: string) => void;
+  statusFilter: Status;
+  setStatusFilter: (newFilter: Status) => void;
   clearCompletedTodos: () => void;
 }
 
@@ -13,8 +14,8 @@ export const Footer: React.FC<Props> = React.memo(
   ({
     activeTodoCount,
     completedTodoCount,
-    filterQuery,
-    setFilterQuery,
+    statusFilter,
+    setStatusFilter,
     clearCompletedTodos,
   }) => {
     return (
@@ -24,8 +25,8 @@ export const Footer: React.FC<Props> = React.memo(
         </span>
 
         <FilterTodos
-          filterQuery={filterQuery}
-          setFilterQuery={setFilterQuery}
+          statusFilter={statusFilter}
+          setStatusFilter={setStatusFilter}
         />
 
         {/* Button is disabled if there are no completed todos */}
