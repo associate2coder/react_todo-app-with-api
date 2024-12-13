@@ -17,7 +17,7 @@ export const FilterTodos: React.FC<Props> = ({
 
         return (
           <a
-            href="#/"
+            href={status === 'all' ? '#/' : `#/${status}`}
             //Active link has the 'selected' class
             className={cn('filter__link', {
               selected: statusFilter === status,
